@@ -14,11 +14,11 @@
     <Version>2020.5.4</Version>
     <RepositoryUrl>https://github.com/afonsoft/Afonsoft.Holidays</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
-    <Description>Afonsoft Extensions DateTime Holiday Brazil Feriados Brasil</Description>
+    <Description>Afonsoft Extensions DateTime Holiday Brazil Feriados Nacionais Brasil</Description>
     <NeutralLanguage>pt-BR</NeutralLanguage>
     <PackageLicenseUrl></PackageLicenseUrl>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <PackageReleaseNotes>Afonsoft Extensions DateTime Holiday Brazil Feriados Brasil</PackageReleaseNotes>
+    <PackageReleaseNotes>Afonsoft Extensions DateTime Holiday Brazil Feriados Nacionais Brasil</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net35'">
