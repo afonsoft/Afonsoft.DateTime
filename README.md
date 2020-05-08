@@ -1,4 +1,4 @@
-# Afonsoft.Holidays
+# Afonsoft.DateTime
 Extensão para o **DateTime** com o tratamento para os feriados nacionais brasileiro.
 
 Com os seguintes métodos.
