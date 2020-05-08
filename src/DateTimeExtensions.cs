@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
-namespace Afonsoft.Date.Extensions
+namespace Afonsoft.Date
 {
     public static class DateTimeExtensions
     {
+
+        private static readonly Dictionary<int, IList<DateTimeHoliday>> dateTimeHolidays = new Dictionary<int, IList<DateTimeHoliday>>();
+
         /// <summary>
         /// ForEach por dia
         /// <example>
@@ -74,20 +78,14 @@ namespace Afonsoft.Date.Extensions
         /// <summary>
         /// Verifica se é um dia útil, se não é sabado e domigo e nem um feriado nacional brasileiro 
         /// </summary>
+        /// <param name="from"></param>
+        /// <param name="bankHolidays">Adicionar algum outro feriado estatual ou municipal</param>
+        /// <returns></returns>        
         public static bool IsWorkingDay(this DateTime from, params DateTime[] bankHolidays)
         {
-
-            if (bankHolidays != null)
-            {
-                return from.DayOfWeek != DayOfWeek.Saturday
-                       && from.DayOfWeek != DayOfWeek.Sunday
-                       && !bankHolidays.Contains(from);
-            }
-            else
-            {
-                return from.DayOfWeek != DayOfWeek.Saturday
-                      && from.DayOfWeek != DayOfWeek.Sunday;
-            }
+            return from.DayOfWeek != DayOfWeek.Saturday
+                   && from.DayOfWeek != DayOfWeek.Sunday
+                   && !MergeDateTimes(from.Holidays(), bankHolidays).Contains(from);
         }
 
        
@@ -139,12 +137,12 @@ namespace Afonsoft.Date.Extensions
         /// </summary>
         /// <param name="from">DateTime Inicial</param>
         /// <param name="workingDays">Quantidade de dias uteis</param>
-        /// <param name="bankHolidays">Lista de feriados default holidays</param>
+        /// <param name="bankHolidays">Adicionar algum outro feriado estatual ou municipal</param>
         /// <returns></returns>
         public static DateTime AddWorkDays(this DateTime from, int workingDays, params DateTime[] bankHolidays)
         {
             int direction = workingDays < 0 ? -1 : 1;
-
+            var holidays = MergeDateTimes(from.Holidays(), bankHolidays);
             DateTime newDate = from;
             // If a working day count of Zero is passed, return the date passed
             if (workingDays == 0)
@@ -157,7 +155,7 @@ namespace Afonsoft.Date.Extensions
                 {
                     if (newDate.DayOfWeek != DayOfWeek.Saturday &&
                         newDate.DayOfWeek != DayOfWeek.Sunday &&
-                        Array.IndexOf(bankHolidays, newDate) < 0)
+                        Array.IndexOf(holidays, newDate) < 0)
                     {
                         workingDays -= direction;
                     }
@@ -177,7 +175,7 @@ namespace Afonsoft.Date.Extensions
         /// </summary>
         /// <param name="firstDay">Data inicial</param>
         /// <param name="lastDay">Data Final</param>
-        /// <param name="bankHolidays">Lista de Feiados</param>
+        /// <param name="bankHolidays">Adicionar algum outro feriado estatual ou municipal</param>
         /// <returns>Numero de dias uteis</returns>
         public static int BusinessDaysUntil(this DateTime firstDay, DateTime lastDay, params DateTime[] bankHolidays)
         {
@@ -185,6 +183,8 @@ namespace Afonsoft.Date.Extensions
             lastDay = lastDay.Date;
             if (firstDay > lastDay)
                 throw new ArgumentException("Incorrect last day " + lastDay);
+
+            var holidays = MergeDateTimes(firstDay.Holidays(), bankHolidays);
 
             TimeSpan span = lastDay - firstDay;
 
@@ -217,7 +217,7 @@ namespace Afonsoft.Date.Extensions
             businessDays -= fullWeekCount + fullWeekCount;
 
             // subtract the number of bank holidays during the time interval
-            foreach (DateTime bankHoliday in bankHolidays)
+            foreach (DateTime bankHoliday in holidays)
             {
                 DateTime bh = bankHoliday.Date;
 
@@ -226,6 +226,156 @@ namespace Afonsoft.Date.Extensions
             }
 
             return businessDays;
+        }
+
+        /// <summary>
+        /// Lista de feriados nacionais brasileiros (PT-BR)
+        /// </summary>
+        /// <returns>Retorna um array de feriados nacionais</returns>
+        public static DateTime[] Holidays(this DateTime from)
+        {
+            return HolidaysCache(from.Year).Select(x => x.Holiday).ToArray();
+        }
+
+        public static DateTimeHoliday[] HolidaysDetails(this DateTime from)
+        {
+            return HolidaysCache(from.Year).ToArray();
+        }
+
+        private static IList<DateTimeHoliday> HolidaysCache(int year)
+        {
+            IList<DateTimeHoliday> arrayOfDate = new List<DateTimeHoliday>();
+
+            if (!dateTimeHolidays.ContainsKey(year))
+            {
+                arrayOfDate.Add(new DateTimeHoliday(DateTime.ParseExact("01/01/" + year, "dd/MM/yyyy", new CultureInfo("pt-BR")), "Confraternização Universal"));
+                arrayOfDate.Add(new DateTimeHoliday(DateTime.ParseExact("21/04/" + year, "dd/MM/yyyy", new CultureInfo("pt-BR")), "Tiradentes"));
+                arrayOfDate.Add(new DateTimeHoliday(DateTime.ParseExact("01/05/" + year, "dd/MM/yyyy", new CultureInfo("pt-BR")), "Dia Mundial do Trabalho"));
+                arrayOfDate.Add(new DateTimeHoliday(DateTime.ParseExact("07/09/" + year, "dd/MM/yyyy", new CultureInfo("pt-BR")), "Independência do Brasil;"));
+                arrayOfDate.Add(new DateTimeHoliday(DateTime.ParseExact("12/10/" + year, "dd/MM/yyyy", new CultureInfo("pt-BR")), "Nossa Senhora Aparecida"));
+                arrayOfDate.Add(new DateTimeHoliday(DateTime.ParseExact("02/11/" + year, "dd/MM/yyyy", new CultureInfo("pt-BR")), "Finados"));
+                arrayOfDate.Add(new DateTimeHoliday(DateTime.ParseExact("15/11/" + year, "dd/MM/yyyy", new CultureInfo("pt-BR")), "Proclamação da República"));
+                arrayOfDate.Add(new DateTimeHoliday(DateTime.ParseExact("25/12/" + year, "dd/MM/yyyy", new CultureInfo("pt-BR")), ""));
+                DateTime easterDay = CalculateEaster(year);
+                arrayOfDate.Add(new DateTimeHoliday(easterDay, "Domingo de Pascoa")); //Domingo de Pascoa (Easter Day)
+                arrayOfDate.Add(new DateTimeHoliday(easterDay.AddDays(-47), "Carnaval")); //The Carnival falls always 47 days before the Easter. Terça-feira de carnaval
+                arrayOfDate.Add(new DateTimeHoliday(easterDay.AddDays(-2), "Paixão de Cristo")); //Paixão de Cristo
+                arrayOfDate.Add(new DateTimeHoliday(easterDay.AddDays(+60), "Corpus Christi")); //The Corpus Christi falls always 60 days after the Easter.
+
+                dateTimeHolidays.Add(year, arrayOfDate);
+            }
+
+            return dateTimeHolidays[year];
+        }
+
+        /// <summary>
+        /// Metodo para Calcular o Domingo de Pascoa.
+        /// </summary>
+        /// <param name="from">DateTime para pegar o ano</param>
+        /// <returns>DateTime com a data da Pascoa</returns>
+        public static DateTime EasterDay(this DateTime from)
+        {
+            return EasterDay(from.Year);
+        }
+
+        /// <summary>
+        /// Metodo para Calcular o Domingo de Pascoa.
+        /// </summary>
+        /// <param name="year">O ano que será retornado a pascoa</param>
+        /// <returns>DateTime com a data da Pascoa</returns>
+        public static DateTime EasterDay(int year)
+        {
+            return CalculateEaster(year);
+        }
+
+        /// <summary>
+        /// Verifica se a data é um feriado
+        /// </summary>
+        public static bool IsHoliday(this DateTime from)
+        {
+            return Holidays(from).Any(x => x.Year == @from.Year && x.Month == @from.Month && x.Day == @from.Day);
+        }
+
+        #region CalculateEaster 
+        /// <summary>
+        /// FUNÇÃO PARA CALCULAR A DATA DO DOMINGO DE PASCOA
+        /// http://www.inf.ufrgs.br/~cabral/Pascoa.html
+        /// </summary>
+        /// <param name="year">ANO QUALQUER</param>
+        /// <returns>DateTime</returns>
+        private static DateTime CalculateEaster(int year)
+        {
+            int x = 24;
+            int y = 5;
+
+            if (year >= 1582 && year <= 1699)
+            {
+                x = 22;
+                y = 2;
+            }
+            else if (year >= 1700 && year <= 1799)
+            {
+                x = 23;
+                y = 3;
+            }
+            else if (year >= 1800 && year <= 1899)
+            {
+                x = 24;
+                y = 4;
+            }
+            else if (year >= 1900 && year <= 2099)
+            {
+                x = 24;
+                y = 5;
+            }
+            else if (year >= 2100 && year <= 2199)
+            {
+                x = 24;
+                y = 6;
+            }
+            else if (year >= 2200 && year <= 2299)
+            {
+                x = 25;
+                y = 7;
+            }
+
+            int a = year % 19;
+            int b = year % 4;
+            int c = year % 7;
+            int d = (19 * a + x) % 30;
+            int e = (2 * b + 4 * c + 6 * d + y) % 7;
+            int day;
+            int month;
+
+            if (d + e > 9)
+            {
+                day = (d + e - 9);
+                month = 4;
+            }
+            else
+            {
+                day = (d + e + 22);
+                month = 3;
+            }
+            return new DateTime(year, month, day);
+        }
+        #endregion
+
+        private static DateTime[] MergeDateTimes(DateTime[] d1, DateTime[] d2)
+        {
+            List<DateTime> dt = new List<DateTime>();
+            dt.AddRange(d1);
+            
+            if (d2 != null && d2.Length > 0)
+            {
+                foreach (var d in d2)
+                {
+                    if (!dt.Contains(d))
+                        dt.Add(d);
+                }
+            }
+
+            return dt.ToArray();
         }
     }
 }

@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Afonsoft.Holidays", "src/Afonsoft.Holidays.csproj", "{8D188B90-AEB0-4798-A710-1000F8B9D14D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Afonsoft.DateTime", "src\Afonsoft.DateTime.csproj", "{8D188B90-AEB0-4798-A710-1000F8B9D14D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Afonsoft.DateTime.UnitTestProject", "test\Afonsoft.DateTime.UnitTestProject.csproj", "{AD9BAD10-F7F0-451D-BB29-9464B6E873DC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{8D188B90-AEB0-4798-A710-1000F8B9D14D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8D188B90-AEB0-4798-A710-1000F8B9D14D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8D188B90-AEB0-4798-A710-1000F8B9D14D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD9BAD10-F7F0-451D-BB29-9464B6E873DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD9BAD10-F7F0-451D-BB29-9464B6E873DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD9BAD10-F7F0-451D-BB29-9464B6E873DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD9BAD10-F7F0-451D-BB29-9464B6E873DC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

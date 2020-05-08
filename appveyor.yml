@@ -18,7 +18,7 @@ nuget:
   project_feed: true
   disable_publish_on_pr: true
 before_build:
-- cmd: nuget.exe restore -verbosity detailed C:\projects\Afonsoft-Holidays\Afonsoft.Holidays.sln
+- cmd: nuget.exe restore -verbosity detailed C:\projects\Afonsoft-DateTime\Afonsoft.DateTime.sln
 dotnet_csproj:
   patch: true
   file: '**\*.csproj'

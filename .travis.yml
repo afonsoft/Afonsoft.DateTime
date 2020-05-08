@@ -12,8 +12,8 @@ env:
 os:
   - linux
   - osx
-solution: Afonsoft.Holidays.sln
+solution: Afonsoft.DateTime.sln
 install:
   - dotnet restore
 script:
-  - dotnet build Afonsoft.Holidays.sln -f netstandard2.0
+  - dotnet build Afonsoft.DateTime.sln -f netstandard2.0

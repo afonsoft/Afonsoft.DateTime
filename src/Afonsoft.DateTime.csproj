@@ -5,14 +5,14 @@
     <Authors>Afonso Dutra Nogueira Filho</Authors>
     <Company>Afonsoft</Company>
     <Copyright>Afonsoft</Copyright>
-    <PackageProjectUrl>https://github.com/afonsoft/Afonsoft.Extensions</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/afonsoft/Afonsoft.DateTime</PackageProjectUrl>
     <PackageTags>Afonsoft Extensions DateTime Holiday Brazil Feriados Brasil</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <AssemblyVersion>2020.5.4</AssemblyVersion>
     <FileVersion>2020.5.4</FileVersion>
     <SignAssembly>false</SignAssembly>
     <Version>2020.5.4</Version>
-    <RepositoryUrl>https://github.com/afonsoft/Afonsoft.Holidays</RepositoryUrl>
+    <RepositoryUrl>https://github.com/afonsoft/Afonsoft.DateTime</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <Description>Afonsoft Extensions DateTime Holiday Brazil Feriados Nacionais Brasil</Description>
     <NeutralLanguage>pt-BR</NeutralLanguage>
